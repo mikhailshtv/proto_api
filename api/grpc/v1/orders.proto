@@ -1,0 +1,50 @@
+// protoc --go_out=. --go-grpc_out=. api/grpc/v1/orders.proto
+syntax = "proto3";
+
+package proto.v1;
+
+option go_package = "pkg/grpc/v1/orders_api";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message GetOrderRequest {
+    int32 id = 1;
+}
+
+message GetOrderResponse {
+    Order order = 1;
+}
+
+message Order {
+    int32 id = 1;
+    int32 number = 2;
+	int32 totalCost = 3;
+	google.protobuf.Timestamp createdDate = 4;
+	google.protobuf.Timestamp lastModifiedDate = 5;
+	int32 status = 6;
+	repeated Product products = 7;
+}
+
+message Product {
+    int32 id = 1;
+    int32 code = 2;
+    int32 quantity = 3;
+    string name = 4;
+    int32 purchasePrice = 5;
+    int32 salePrice = 6;
+}
+
+message GetOrdersResponse{
+    repeated Order orders = 1;
+}
+
+service OrderService {
+    rpc GetOrders (google.protobuf.Empty) returns (GetOrdersResponse);
+    rpc GetOrder (GetOrderRequest) returns (GetOrderResponse);
+    
+
+    // rpc GetUserStreamClient(stream GetUserRequest) returns (GetUserResponse);
+    // rpc GetUserStreamServer(GetUserRequest) returns (stream GetUserResponse);
+    // rpc GetUserStream(stream GetUserRequest) returns (stream GetUserResponse);
+}
