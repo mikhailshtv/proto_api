@@ -1,4 +1,4 @@
-module proto_api
+module github.com/mikhailshtv/proto_api
 
 go 1.23.8
 
