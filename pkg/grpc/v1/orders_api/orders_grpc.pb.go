@@ -22,8 +22,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderService_GetOrders_FullMethodName = "/proto.v1.OrderService/GetOrders"
-	OrderService_GetOrder_FullMethodName  = "/proto.v1.OrderService/GetOrder"
+	OrderService_GetOrders_FullMethodName   = "/proto.v1.OrderService/GetOrders"
+	OrderService_GetOrder_FullMethodName    = "/proto.v1.OrderService/GetOrder"
+	OrderService_CreateOrder_FullMethodName = "/proto.v1.OrderService/CreateOrder"
+	OrderService_EditOrder_FullMethodName   = "/proto.v1.OrderService/EditOrder"
+	OrderService_DeleteOrder_FullMethodName = "/proto.v1.OrderService/DeleteOrder"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -31,7 +34,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
 	GetOrders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetOrdersResponse, error)
-	GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
+	GetOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
+	CreateOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error)
+	EditOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error)
+	DeleteOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*Success, error)
 }
 
 type orderServiceClient struct {
@@ -52,10 +58,40 @@ func (c *orderServiceClient) GetOrders(ctx context.Context, in *emptypb.Empty, o
 	return out, nil
 }
 
-func (c *orderServiceClient) GetOrder(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
+func (c *orderServiceClient) GetOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderResponse)
 	err := c.cc.Invoke(ctx, OrderService_GetOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) CreateOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Order)
+	err := c.cc.Invoke(ctx, OrderService_CreateOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) EditOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Order)
+	err := c.cc.Invoke(ctx, OrderService_EditOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) DeleteOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*Success, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Success)
+	err := c.cc.Invoke(ctx, OrderService_DeleteOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +103,10 @@ func (c *orderServiceClient) GetOrder(ctx context.Context, in *GetOrderRequest, 
 // for forward compatibility.
 type OrderServiceServer interface {
 	GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error)
-	GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error)
+	GetOrder(context.Context, *OrderActionByIdRequest) (*GetOrderResponse, error)
+	CreateOrder(context.Context, *OrderCreateRequest) (*Order, error)
+	EditOrder(context.Context, *OrderCreateRequest) (*Order, error)
+	DeleteOrder(context.Context, *OrderActionByIdRequest) (*Success, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -81,8 +120,17 @@ type UnimplementedOrderServiceServer struct{}
 func (UnimplementedOrderServiceServer) GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
 }
-func (UnimplementedOrderServiceServer) GetOrder(context.Context, *GetOrderRequest) (*GetOrderResponse, error) {
+func (UnimplementedOrderServiceServer) GetOrder(context.Context, *OrderActionByIdRequest) (*GetOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderCreateRequest) (*Order, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) EditOrder(context.Context, *OrderCreateRequest) (*Order, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) DeleteOrder(context.Context, *OrderActionByIdRequest) (*Success, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -124,7 +172,7 @@ func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOrderRequest)
+	in := new(OrderActionByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -136,7 +184,61 @@ func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: OrderService_GetOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).GetOrder(ctx, req.(*GetOrderRequest))
+		return srv.(OrderServiceServer).GetOrder(ctx, req.(*OrderActionByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CreateOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CreateOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CreateOrder(ctx, req.(*OrderCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_EditOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).EditOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_EditOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).EditOrder(ctx, req.(*OrderCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderActionByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).DeleteOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_DeleteOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).DeleteOrder(ctx, req.(*OrderActionByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -155,6 +257,18 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrder",
 			Handler:    _OrderService_GetOrder_Handler,
+		},
+		{
+			MethodName: "CreateOrder",
+			Handler:    _OrderService_CreateOrder_Handler,
+		},
+		{
+			MethodName: "EditOrder",
+			Handler:    _OrderService_EditOrder_Handler,
+		},
+		{
+			MethodName: "DeleteOrder",
+			Handler:    _OrderService_DeleteOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
