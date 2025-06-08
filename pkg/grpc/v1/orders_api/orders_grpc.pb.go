@@ -36,7 +36,7 @@ type OrderServiceClient interface {
 	GetOrders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetOrdersResponse, error)
 	GetOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
 	CreateOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error)
-	EditOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error)
+	EditOrder(ctx context.Context, in *OrderEditRequest, opts ...grpc.CallOption) (*Order, error)
 	DeleteOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*Success, error)
 }
 
@@ -78,7 +78,7 @@ func (c *orderServiceClient) CreateOrder(ctx context.Context, in *OrderCreateReq
 	return out, nil
 }
 
-func (c *orderServiceClient) EditOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error) {
+func (c *orderServiceClient) EditOrder(ctx context.Context, in *OrderEditRequest, opts ...grpc.CallOption) (*Order, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Order)
 	err := c.cc.Invoke(ctx, OrderService_EditOrder_FullMethodName, in, out, cOpts...)
@@ -105,7 +105,7 @@ type OrderServiceServer interface {
 	GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error)
 	GetOrder(context.Context, *OrderActionByIdRequest) (*GetOrderResponse, error)
 	CreateOrder(context.Context, *OrderCreateRequest) (*Order, error)
-	EditOrder(context.Context, *OrderCreateRequest) (*Order, error)
+	EditOrder(context.Context, *OrderEditRequest) (*Order, error)
 	DeleteOrder(context.Context, *OrderActionByIdRequest) (*Success, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
@@ -126,7 +126,7 @@ func (UnimplementedOrderServiceServer) GetOrder(context.Context, *OrderActionByI
 func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderCreateRequest) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
-func (UnimplementedOrderServiceServer) EditOrder(context.Context, *OrderCreateRequest) (*Order, error) {
+func (UnimplementedOrderServiceServer) EditOrder(context.Context, *OrderEditRequest) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) DeleteOrder(context.Context, *OrderActionByIdRequest) (*Success, error) {
@@ -208,7 +208,7 @@ func _OrderService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _OrderService_EditOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderCreateRequest)
+	in := new(OrderEditRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -220,7 +220,7 @@ func _OrderService_EditOrder_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: OrderService_EditOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).EditOrder(ctx, req.(*OrderCreateRequest))
+		return srv.(OrderServiceServer).EditOrder(ctx, req.(*OrderEditRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

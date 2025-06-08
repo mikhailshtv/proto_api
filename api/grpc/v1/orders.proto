@@ -30,6 +30,11 @@ message OrderCreateRequest {
     repeated Product products = 1;
 }
 
+message OrderEditRequest {
+    int32 id = 1;
+    repeated Product products = 2;
+}
+
 message Product {
     int32 id = 1;
     int32 code = 2;
@@ -52,6 +57,6 @@ service OrderService {
     rpc GetOrders (google.protobuf.Empty) returns (GetOrdersResponse);
     rpc GetOrder (OrderActionByIdRequest) returns (GetOrderResponse);
     rpc CreateOrder (OrderCreateRequest) returns (Order);
-    rpc EditOrder (OrderCreateRequest) returns (Order);
+    rpc EditOrder (OrderEditRequest) returns (Order);
     rpc DeleteOrder (OrderActionByIdRequest) returns (Success);
 }
