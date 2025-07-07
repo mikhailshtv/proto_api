@@ -7,7 +7,7 @@ PROTO_FILES = $(wildcard $(PROTO_DIR)/*.proto)
 # Флаги генерации
 GO_OUT_FLAGS = \
 	--go_out=. \
-	--go-grpc_out=. 
+	--go-grpc_out=. api/grpc/v1/orders.proto
 
 # Цель по умолчанию
 .PHONY: all
