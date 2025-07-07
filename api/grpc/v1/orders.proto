@@ -22,7 +22,7 @@ message Order {
 	int32 totalCost = 3;
 	google.protobuf.Timestamp createdDate = 4;
 	google.protobuf.Timestamp lastModifiedDate = 5;
-	int32 status = 6;
+	OrderStatus status = 6;
 	repeated Product products = 7;
 }
 
@@ -33,6 +33,11 @@ message OrderCreateRequest {
 message OrderEditRequest {
     int32 id = 1;
     repeated Product products = 2;
+}
+
+message OrderStatus {
+	string Key = 1;
+	string DisplayName = 2;
 }
 
 message Product {
