@@ -28,6 +28,7 @@ const (
 type OrderActionByIdRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int32                  `protobuf:"varint,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -65,6 +66,13 @@ func (*OrderActionByIdRequest) Descriptor() ([]byte, []int) {
 func (x *OrderActionByIdRequest) GetId() int32 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *OrderActionByIdRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -261,6 +269,7 @@ type OrderEditRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Products      []*OrderProduct        `protobuf:"bytes,2,rep,name=products,proto3" json:"products,omitempty"`
+	UserId        int32                  `protobuf:"varint,3,opt,name=userId,proto3" json:"userId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -307,6 +316,13 @@ func (x *OrderEditRequest) GetProducts() []*OrderProduct {
 		return x.Products
 	}
 	return nil
+}
+
+func (x *OrderEditRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type OrderStatus struct {
@@ -605,9 +621,10 @@ var File_api_grpc_v1_orders_proto protoreflect.FileDescriptor
 
 const file_api_grpc_v1_orders_proto_rawDesc = "" +
 	"\n" +
-	"\x18api/grpc/v1/orders.proto\x12\bproto.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"(\n" +
+	"\x18api/grpc/v1/orders.proto\x12\bproto.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"@\n" +
 	"\x16OrderActionByIdRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\"9\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x16\n" +
+	"\x06userId\x18\x02 \x01(\x05R\x06userId\"9\n" +
 	"\x10GetOrderResponse\x12%\n" +
 	"\x05order\x18\x01 \x01(\v2\x0f.proto.v1.OrderR\x05order\"\xb1\x02\n" +
 	"\x05Order\x12\x0e\n" +
@@ -620,10 +637,11 @@ const file_api_grpc_v1_orders_proto_rawDesc = "" +
 	"\bproducts\x18\a \x03(\v2\x11.proto.v1.ProductR\bproducts\"`\n" +
 	"\x12OrderCreateRequest\x122\n" +
 	"\bproducts\x18\x01 \x03(\v2\x16.proto.v1.OrderProductR\bproducts\x12\x16\n" +
-	"\x06userId\x18\x02 \x01(\x05R\x06userId\"V\n" +
+	"\x06userId\x18\x02 \x01(\x05R\x06userId\"n\n" +
 	"\x10OrderEditRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x122\n" +
-	"\bproducts\x18\x02 \x03(\v2\x16.proto.v1.OrderProductR\bproducts\"A\n" +
+	"\bproducts\x18\x02 \x03(\v2\x16.proto.v1.OrderProductR\bproducts\x12\x16\n" +
+	"\x06userId\x18\x03 \x01(\x05R\x06userId\"A\n" +
 	"\vOrderStatus\x12\x10\n" +
 	"\x03Key\x18\x01 \x01(\tR\x03Key\x12 \n" +
 	"\vDisplayName\x18\x02 \x01(\tR\vDisplayName\"f\n" +
