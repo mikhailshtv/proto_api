@@ -27,17 +27,24 @@ message Order {
 }
 
 message OrderCreateRequest {
-    repeated Product products = 1;
+    repeated OrderProduct products = 1;
+    int32 userId = 2;
 }
 
 message OrderEditRequest {
     int32 id = 1;
-    repeated Product products = 2;
+    repeated OrderProduct products = 2;
 }
 
 message OrderStatus {
 	string Key = 1;
 	string DisplayName = 2;
+}
+
+message OrderProduct {
+    int32 productId = 1;
+    int32 quantity = 2;
+    int32 salePrice = 3;
 }
 
 message Product {
