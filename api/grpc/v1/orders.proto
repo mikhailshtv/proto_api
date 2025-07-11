@@ -5,10 +5,22 @@ package proto.v1;
 
 option go_package = "pkg/grpc/v1/orders_api";
 
-import "google/protobuf/empty.proto";
+// import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-message OrderActionByIdRequest {
+
+message OrderGetAllRequest {
+    int32 userId = 1;
+    string role = 2;
+}
+
+message OrderGetByIdRequest {
+    int32 id = 1;
+    int32 userId = 2;
+    string role = 3;
+}
+
+message OrderDeleteRequest {
     int32 id = 1;
     int32 userId = 2;
 }
@@ -68,9 +80,9 @@ message Success {
 }
 
 service OrderService {
-    rpc GetOrders (google.protobuf.Empty) returns (GetOrdersResponse);
-    rpc GetOrder (OrderActionByIdRequest) returns (GetOrderResponse);
+    rpc GetOrders (OrderGetAllRequest) returns (GetOrdersResponse);
+    rpc GetOrder (OrderGetByIdRequest) returns (GetOrderResponse);
     rpc CreateOrder (OrderCreateRequest) returns (Order);
     rpc EditOrder (OrderEditRequest) returns (Order);
-    rpc DeleteOrder (OrderActionByIdRequest) returns (Success);
+    rpc DeleteOrder (OrderDeleteRequest) returns (Success);
 }

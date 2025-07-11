@@ -13,7 +13,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -33,11 +32,11 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	GetOrders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetOrdersResponse, error)
-	GetOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
+	GetOrders(ctx context.Context, in *OrderGetAllRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error)
+	GetOrder(ctx context.Context, in *OrderGetByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error)
 	CreateOrder(ctx context.Context, in *OrderCreateRequest, opts ...grpc.CallOption) (*Order, error)
 	EditOrder(ctx context.Context, in *OrderEditRequest, opts ...grpc.CallOption) (*Order, error)
-	DeleteOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*Success, error)
+	DeleteOrder(ctx context.Context, in *OrderDeleteRequest, opts ...grpc.CallOption) (*Success, error)
 }
 
 type orderServiceClient struct {
@@ -48,7 +47,7 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
 }
 
-func (c *orderServiceClient) GetOrders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetOrdersResponse, error) {
+func (c *orderServiceClient) GetOrders(ctx context.Context, in *OrderGetAllRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrdersResponse)
 	err := c.cc.Invoke(ctx, OrderService_GetOrders_FullMethodName, in, out, cOpts...)
@@ -58,7 +57,7 @@ func (c *orderServiceClient) GetOrders(ctx context.Context, in *emptypb.Empty, o
 	return out, nil
 }
 
-func (c *orderServiceClient) GetOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
+func (c *orderServiceClient) GetOrder(ctx context.Context, in *OrderGetByIdRequest, opts ...grpc.CallOption) (*GetOrderResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderResponse)
 	err := c.cc.Invoke(ctx, OrderService_GetOrder_FullMethodName, in, out, cOpts...)
@@ -88,7 +87,7 @@ func (c *orderServiceClient) EditOrder(ctx context.Context, in *OrderEditRequest
 	return out, nil
 }
 
-func (c *orderServiceClient) DeleteOrder(ctx context.Context, in *OrderActionByIdRequest, opts ...grpc.CallOption) (*Success, error) {
+func (c *orderServiceClient) DeleteOrder(ctx context.Context, in *OrderDeleteRequest, opts ...grpc.CallOption) (*Success, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Success)
 	err := c.cc.Invoke(ctx, OrderService_DeleteOrder_FullMethodName, in, out, cOpts...)
@@ -102,11 +101,11 @@ func (c *orderServiceClient) DeleteOrder(ctx context.Context, in *OrderActionByI
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
 type OrderServiceServer interface {
-	GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error)
-	GetOrder(context.Context, *OrderActionByIdRequest) (*GetOrderResponse, error)
+	GetOrders(context.Context, *OrderGetAllRequest) (*GetOrdersResponse, error)
+	GetOrder(context.Context, *OrderGetByIdRequest) (*GetOrderResponse, error)
 	CreateOrder(context.Context, *OrderCreateRequest) (*Order, error)
 	EditOrder(context.Context, *OrderEditRequest) (*Order, error)
-	DeleteOrder(context.Context, *OrderActionByIdRequest) (*Success, error)
+	DeleteOrder(context.Context, *OrderDeleteRequest) (*Success, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -117,10 +116,10 @@ type OrderServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedOrderServiceServer struct{}
 
-func (UnimplementedOrderServiceServer) GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error) {
+func (UnimplementedOrderServiceServer) GetOrders(context.Context, *OrderGetAllRequest) (*GetOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
 }
-func (UnimplementedOrderServiceServer) GetOrder(context.Context, *OrderActionByIdRequest) (*GetOrderResponse, error) {
+func (UnimplementedOrderServiceServer) GetOrder(context.Context, *OrderGetByIdRequest) (*GetOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderCreateRequest) (*Order, error) {
@@ -129,7 +128,7 @@ func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *OrderCreate
 func (UnimplementedOrderServiceServer) EditOrder(context.Context, *OrderEditRequest) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditOrder not implemented")
 }
-func (UnimplementedOrderServiceServer) DeleteOrder(context.Context, *OrderActionByIdRequest) (*Success, error) {
+func (UnimplementedOrderServiceServer) DeleteOrder(context.Context, *OrderDeleteRequest) (*Success, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
@@ -154,7 +153,7 @@ func RegisterOrderServiceServer(s grpc.ServiceRegistrar, srv OrderServiceServer)
 }
 
 func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(OrderGetAllRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -166,13 +165,13 @@ func _OrderService_GetOrders_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: OrderService_GetOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).GetOrders(ctx, req.(*emptypb.Empty))
+		return srv.(OrderServiceServer).GetOrders(ctx, req.(*OrderGetAllRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderActionByIdRequest)
+	in := new(OrderGetByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -184,7 +183,7 @@ func _OrderService_GetOrder_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: OrderService_GetOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).GetOrder(ctx, req.(*OrderActionByIdRequest))
+		return srv.(OrderServiceServer).GetOrder(ctx, req.(*OrderGetByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,7 +225,7 @@ func _OrderService_EditOrder_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _OrderService_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderActionByIdRequest)
+	in := new(OrderDeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -238,7 +237,7 @@ func _OrderService_DeleteOrder_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: OrderService_DeleteOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).DeleteOrder(ctx, req.(*OrderActionByIdRequest))
+		return srv.(OrderServiceServer).DeleteOrder(ctx, req.(*OrderDeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
